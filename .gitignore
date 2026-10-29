@@ -1,0 +1,20 @@
+# Dados de ponto / CPF — nunca enviar
+1-COLE-OS-AFD-AQUI/*
+!1-COLE-OS-AFD-AQUI/LEIA-ME.txt
+2-PLANILHAS-PRONTAS/
+saida/
+dados/
+*.xlsx
+*.csv
+
+# Segredo local (login no Streamlit Cloud vai no painel, não no Git)
+.streamlit/secrets.toml
+
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+*.spec
+dist/
+build/

@@ -1,0 +1,8 @@
+COLE AQUI os arquivos do relógio de ponto (AFD).
+
+Aceita: .txt  .afd  .dat  ou nome começando com AFD
+
+Depois volte e clique em PROCESSAR no conversor.
+A planilha de cada arquivo aparece em:
+
+  2-PLANILHAS-PRONTAS
