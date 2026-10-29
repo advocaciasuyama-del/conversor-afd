@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
-"""Interface web: login, envia AFD e baixa a planilha."""
+"""Interface web Conmari: login, envia AFD e baixa a planilha."""
 from __future__ import annotations
 
+import base64
 import zipfile
 from io import BytesIO
+from pathlib import Path
 
 import streamlit as st
 
@@ -11,8 +13,150 @@ from converter import processar_memoria
 
 USUARIO = "ponto"
 SENHA = "Ribeira2026"
+TITULO = "Tratamento de Ponto Eletrônico"
+MARCA = "Conmari"
+LOGO = Path(__file__).resolve().parent / "static" / "logo_conmari.svg"
 
-st.set_page_config(page_title="Conversor AFD → planilha", layout="centered")
+st.set_page_config(
+    page_title=f"{TITULO} — {MARCA}",
+    page_icon=str(LOGO) if LOGO.exists() else "⏱️",
+    layout="centered",
+    initial_sidebar_state="collapsed",
+)
+
+
+def _logo_data_uri() -> str:
+    if not LOGO.exists():
+        return ""
+    payload = base64.b64encode(LOGO.read_bytes()).decode("ascii")
+    return f"data:image/svg+xml;base64,{payload}"
+
+
+def aplicar_visual() -> None:
+    logo = _logo_data_uri()
+    st.markdown(
+        f"""
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&display=swap');
+
+  html, body, [class*="css"] {{
+    font-family: "Instrument Sans", "Segoe UI", sans-serif;
+  }}
+  .stApp {{
+    background:
+      radial-gradient(1200px 500px at 50% -10%, rgba(212,168,75,.16), transparent 55%),
+      radial-gradient(800px 400px at 100% 100%, rgba(212,168,75,.06), transparent 45%),
+      #0B0F14;
+    color: #E8EEF4;
+  }}
+  [data-testid="stHeader"] {{
+    background: transparent;
+  }}
+  [data-testid="stToolbar"] {{
+    display: none;
+  }}
+  footer {{
+    visibility: hidden;
+  }}
+  .block-container {{
+    padding-top: 2.2rem;
+    padding-bottom: 3rem;
+    max-width: 760px;
+  }}
+  .cm-brand {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: .35rem;
+    margin: .4rem 0 1.6rem;
+  }}
+  .cm-brand img {{
+    width: 220px;
+    max-width: 70vw;
+    filter: drop-shadow(0 8px 24px rgba(212,168,75,.18));
+  }}
+  .cm-kicker {{
+    margin: 0;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    font-size: .68rem;
+    color: #D4A84B;
+    font-weight: 600;
+  }}
+  .cm-title {{
+    margin: .15rem 0 0;
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    color: #F4F7FB;
+  }}
+  .cm-sub {{
+    margin: .15rem 0 0;
+    color: #9AA8B6;
+    font-size: .95rem;
+  }}
+  [data-testid="stForm"] {{
+    background: #121820;
+    border: 1px solid #2A3340;
+    border-radius: 18px;
+    padding: 1.15rem 1.15rem .35rem;
+    box-shadow: 0 18px 50px rgba(0,0,0,.28);
+  }}
+  [data-testid="stTextInput"] input {{
+    background: #0B0F14 !important;
+    color: #F4F7FB !important;
+    border-radius: 12px !important;
+  }}
+  .stButton > button, .stFormSubmitButton > button, .stDownloadButton > button {{
+    background: linear-gradient(180deg, #E2C06A, #C4922A) !important;
+    color: #1A1408 !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    letter-spacing: .02em;
+    height: 2.8rem;
+    box-shadow: 0 8px 22px rgba(196,146,42,.28);
+  }}
+  .stButton > button:hover, .stFormSubmitButton > button:hover, .stDownloadButton > button:hover {{
+    filter: brightness(1.06);
+  }}
+  [data-testid="stFileUploader"] {{
+    background: #121820;
+    border: 1px dashed #3A4554;
+    border-radius: 18px;
+    padding: .85rem 1rem 1.1rem;
+  }}
+  [data-testid="stMetric"] {{
+    background: #121820;
+    border: 1px solid #2A3340;
+    border-radius: 14px;
+    padding: .7rem .85rem;
+  }}
+  [data-testid="stAlert"] {{
+    border-radius: 14px;
+  }}
+  [data-testid="stSidebar"] {{
+    background: #10151C;
+    border-right: 1px solid #243040;
+  }}
+  .cm-card {{
+    background: #121820;
+    border: 1px solid #2A3340;
+    border-radius: 18px;
+    padding: 1rem 1.1rem 1.15rem;
+    margin-bottom: .9rem;
+  }}
+</style>
+<div class="cm-brand">
+  {"<img src='" + logo + "' alt='Conmari' />" if logo else ""}
+  <p class="cm-kicker">{MARCA}</p>
+  <h1 class="cm-title">{TITULO}</h1>
+  <p class="cm-sub">Conversão de AFD do relógio em planilha de ponto</p>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
 
 
 def _credenciais() -> tuple[str, str]:
@@ -26,15 +170,16 @@ def _credenciais() -> tuple[str, str]:
 def exigir_login() -> None:
     if st.session_state.get("logado"):
         with st.sidebar:
-            st.caption(f"Logado como {st.session_state.get('usuario_ok', '')}")
-            if st.button("Sair"):
+            if LOGO.exists():
+                st.image(str(LOGO), use_container_width=True)
+            st.caption(MARCA)
+            st.caption(f"Logado como **{st.session_state.get('usuario_ok', '')}**")
+            if st.button("Sair", use_container_width=True):
                 st.session_state.clear()
                 st.rerun()
         return
 
     usuario_ok, senha_ok = _credenciais()
-    st.title("Conversor de ponto AFD")
-    st.caption("Entre com o login que você recebeu.")
     with st.form("login"):
         usuario = st.text_input("Login")
         senha = st.text_input("Senha", type="password")
@@ -48,9 +193,9 @@ def exigir_login() -> None:
     st.stop()
 
 
+aplicar_visual()
 exigir_login()
 
-st.title("Conversor de ponto AFD")
 st.caption("Envie o arquivo do relógio e baixe a planilha de cada um.")
 
 arquivos = st.file_uploader(
