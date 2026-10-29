@@ -1,13 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 72" fill="none">
-  <defs>
-    <linearGradient id="gold" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#F3D48A"/>
-      <stop offset="1" stop-color="#C4922A"/>
-    </linearGradient>
-  </defs>
-  <rect x="2" y="2" width="68" height="68" rx="18" fill="#161C24" stroke="url(#gold)" stroke-width="2.2"/>
-  <circle cx="36" cy="36" r="18.5" stroke="url(#gold)" stroke-width="2.4"/>
-  <circle cx="36" cy="36" r="2.4" fill="#F3D48A"/>
-  <path d="M36 22.5V36L46 42" stroke="#F3D48A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="86" y="46" fill="#F3D48A" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="700" letter-spacing="3">CONMARI</text>
+  <rect x="2" y="2" width="68" height="68" rx="16" fill="#161C24" stroke="#B8954A" stroke-width="2"/>
+  <circle cx="36" cy="36" r="18.5" stroke="#B8954A" stroke-width="2"/>
+  <circle cx="36" cy="36" r="2.2" fill="#B8954A"/>
+  <path d="M36 22.5V36L46 42" stroke="#B8954A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="86" y="46" fill="#B8954A" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-weight="700" letter-spacing="3">CONMARI</text>
 </svg>

@@ -9,6 +9,7 @@ dados/
 
 # Segredo local (login no Streamlit Cloud vai no painel, não no Git)
 .streamlit/secrets.toml
+sci_depara.py
 
 __pycache__/
 *.pyc

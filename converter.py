@@ -311,6 +311,15 @@ def processar_memoria(nome_arquivo: str, conteudo: bytes) -> dict:
     meta["stem"] = stem
     meta["xlsx_bytes"] = excel_bytes(df_batidas, df_emp, cartao, analise)
     meta["xlsx_nome"] = f"{stem}.xlsx"
+    from sci import gerar_sci_de_batidas
+
+    sci = gerar_sci_de_batidas(df_batidas)
+    meta["sci_bytes"] = sci["texto"].encode("utf-8")
+    meta["sci_nome"] = f"{stem}_sci_empresa{sci['empresa']}.txt"
+    meta["sci_registros"] = sci["registros"]
+    meta["sci_ignorados"] = sci["ignorados"]
+    meta["sci_sem_mapa"] = sci["sem_mapa"]
+    meta["sci_diagnostico"] = sci["diagnostico"]
     return meta
 
 

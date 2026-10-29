@@ -43,10 +43,7 @@ def aplicar_visual() -> None:
     font-family: "Instrument Sans", "Segoe UI", sans-serif;
   }}
   .stApp {{
-    background:
-      radial-gradient(1200px 500px at 50% -10%, rgba(212,168,75,.16), transparent 55%),
-      radial-gradient(800px 400px at 100% 100%, rgba(212,168,75,.06), transparent 45%),
-      #0B0F14;
+    background: #0B0F14;
     color: #E8EEF4;
   }}
   [data-testid="stHeader"] {{
@@ -74,14 +71,13 @@ def aplicar_visual() -> None:
   .cm-brand img {{
     width: 220px;
     max-width: 70vw;
-    filter: drop-shadow(0 8px 24px rgba(212,168,75,.18));
   }}
   .cm-kicker {{
     margin: 0;
     letter-spacing: .28em;
     text-transform: uppercase;
     font-size: .68rem;
-    color: #D4A84B;
+    color: #B8954A;
     font-weight: 600;
   }}
   .cm-title {{
@@ -101,7 +97,6 @@ def aplicar_visual() -> None:
     border: 1px solid #2A3340;
     border-radius: 18px;
     padding: 1.15rem 1.15rem .35rem;
-    box-shadow: 0 18px 50px rgba(0,0,0,.28);
   }}
   [data-testid="stTextInput"] input {{
     background: #0B0F14 !important;
@@ -109,17 +104,18 @@ def aplicar_visual() -> None:
     border-radius: 12px !important;
   }}
   .stButton > button, .stFormSubmitButton > button, .stDownloadButton > button {{
-    background: linear-gradient(180deg, #E2C06A, #C4922A) !important;
-    color: #1A1408 !important;
+    background: #B8954A !important;
+    color: #14110C !important;
     border: 0 !important;
-    border-radius: 12px !important;
-    font-weight: 700 !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
     letter-spacing: .02em;
     height: 2.8rem;
-    box-shadow: 0 8px 22px rgba(196,146,42,.28);
+    box-shadow: none !important;
   }}
   .stButton > button:hover, .stFormSubmitButton > button:hover, .stDownloadButton > button:hover {{
-    filter: brightness(1.06);
+    background: #A68542 !important;
+    filter: none;
   }}
   [data-testid="stFileUploader"] {{
     background: #121820;
@@ -149,8 +145,7 @@ def aplicar_visual() -> None:
   }}
 </style>
 <div class="cm-brand">
-  {"<img src='" + logo + "' alt='Conmari' />" if logo else ""}
-  <p class="cm-kicker">{MARCA}</p>
+  {"<img src='" + logo + "' alt='Conmari' />" if logo else f'<p class="cm-kicker">{MARCA}</p>'}
   <h1 class="cm-title">{TITULO}</h1>
   <p class="cm-sub">Conversão de AFD do relógio em planilha de ponto</p>
 </div>
@@ -263,3 +258,19 @@ for r in resultados:
             key=f"dl-{r['xlsx_nome']}",
             use_container_width=True,
         )
+        if r.get("sci_bytes"):
+            st.download_button(
+                f"Baixar TXT SCI empresa 14 ({r.get('sci_registros') or 0} marcações)",
+                data=r["sci_bytes"],
+                file_name=r.get("sci_nome") or "ponto_sci.txt",
+                mime="text/plain",
+                key=f"sci-{r['xlsx_nome']}",
+                use_container_width=True,
+            )
+            if r.get("sci_diagnostico"):
+                with st.expander("De-para SCI"):
+                    for item in r["sci_diagnostico"]:
+                        st.caption(
+                            f"{item.get('nome') or '—'} · {item.get('pis')} · "
+                            f"{item.get('batidas')} batidas · {item.get('status')}"
+                        )
